@@ -8,7 +8,8 @@ import "core:mem"
 import "core:os"
 import "core:sys/posix"
 
-main :: proc() {
+//@export
+main :: proc "c" () {
 	context = runtime.default_context()
 
 	fmt.println("Hellope bird!")
