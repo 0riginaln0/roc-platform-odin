@@ -107,35 +107,37 @@ roc_shm_open :: proc "c" (name: cstring, oflag: c.int, mode: c.int) -> c.int {
 	}
 }
 
-roc_alloc :: proc "c" (size: int, alignment: int) -> rawptr {
+
+@export roc_alloc :: proc "c" (size: int, alignment: int) -> rawptr {
 	context = runtime.default_context()
 	data, err := runtime.mem_alloc(size)
 	return raw_data(data) if err == .None else nil
 }
 
-roc_realloc :: proc "c" (ptr: rawptr, new_size: int, old_size: int, alignment: int) -> rawptr {
+
+@export roc_realloc :: proc "c" (ptr: rawptr, new_size: int, old_size: int, alignment: int) -> rawptr {
 	context = runtime.default_context()
 	data, err := runtime.mem_resize(ptr, old_size, new_size, alignment)
 	return raw_data(data) if err == .None else nil
 }
 
-roc_dealloc :: proc "c" (ptr: rawptr, alignment: int) {
+@export roc_dealloc :: proc "c" (ptr: rawptr, alignment: int) {
 	context = runtime.default_context()
 	runtime.mem_free(ptr)
 }
 
-roc_panic :: proc "c" (ptr: rawptr, alignment: int) {
+@export roc_panic :: proc "c" (ptr: rawptr, alignment: int) {
 	context = runtime.default_context()
 	msg := cast(cstring)ptr
 	fmt.eprintf("Application crashed with message\n\n    %s\n\nShutting down\n", msg)
 	os.exit(1)
 }
 
-roc_dbg :: proc "c" (loc, msg, src: cstring) {
+@export roc_dbg :: proc "c" (loc, msg, src: cstring) {
 	context = runtime.default_context()
 	fmt.eprintf("[%s] %s = %s\n", loc, src, msg)
 }
 
-roc_memset :: proc "c" (str: rawptr, cc: c.int, n: c.size_t) -> rawptr {
+@export roc_memset :: proc "c" (str: rawptr, cc: c.int, n: c.size_t) -> rawptr {
 	return mem.set(str, byte(cc), int(n))
 }
